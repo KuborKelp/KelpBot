@@ -1,0 +1,4 @@
+#talk {scatter/bar/plot}   绘制近期发言{散点图/柱状图/折线图}
+#{scatter/bar/plot} [_x],[_y_1],[_y_n],color=[_color_1,color_n],s=[_s_1,s_2],alpha=[_alpha_1,alpha_2],title='title:string'
+其中 s,alpha只能用于scatter,alpha内数值∈[_0,1]
+样例:#scatter [_A,B,C],[_90,22,26],[_26,88,70],color=[_red,blue],s=[_400,210],alpha=[_0.6,0.4],title=help!

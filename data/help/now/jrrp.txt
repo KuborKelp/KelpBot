@@ -1,0 +1,2 @@
+#jrrp 获取当日人品
+#jrrp {scatter/bar/plot} 绘制近15天的人品{散点图/柱状图/折线图}

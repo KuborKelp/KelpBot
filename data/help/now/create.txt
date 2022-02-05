@@ -1,0 +1,3 @@
+#create qq_id_1:message_1:qq_name_1;qq_id_n:message_n:qq_name_n
+*qq_name可省略  
+示例:#create 2424947232:#create 发送一条假群聊消息，群员/内容/群名片可自定义，由半角冒号分隔:KelpBot

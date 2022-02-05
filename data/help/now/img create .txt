@@ -1,0 +1,4 @@
+#img create (i*i+j*j)%256,(i*i+j*j)%256,(i*i+j*j)%256
+#img create (i+j)*(i+j)%256,(i+j)*(i+j)%256,(i+j)*(i+j)%256
+#img create sin(i)*i,cos(j)*128,i+j
+#img create (i**i)%256,(i*j)%256,(i+j)*(i-j)%256

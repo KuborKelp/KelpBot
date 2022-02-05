@@ -1,0 +1,1 @@
+#info {bvid} 获取视频信息 例:#info BV1uT4y1P7CX
