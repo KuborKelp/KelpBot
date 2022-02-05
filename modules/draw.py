@@ -1,19 +1,31 @@
-"""
-#scatter [A,B,C],[90,22,26],[26,88,70],color=[red,blue],s=[400,210],alpha=[0.6,0.4],title=sb
-"""
-
-import matplotlib
-import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties
-import os
-import random
-
 from graia.saya import Channel
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.element import Plain, At, Image
 from graia.ariadne.event.message import *
+import os
+import matplotlib.pyplot as plt
+from matplotlib.font_manager import FontProperties
+import random
+
+def status():
+    path = './data/status/command'
+    Module = 'draw'
+    Command = ['#scatter','#plot','#bar','#talk']
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if not os.path.exists(f'./data/status/modules/'):
+        os.makedirs(f'./data/status/modules/')
+    for i in Command:
+        if not os.path.exists(path+'/'+i+'.txt'):
+            with open(path+'/'+i+'.txt','w') as txt:
+                txt.write('0')
+    with open(f'./data/status/modules/{Module}','w') as txt:
+                txt.write('0')
+
+example = '#scatter [A,B,C],[90,22,26],[26,88,70],color=[red,blue],s=[400,210],alpha=[0.6,0.4],title=sb'
+status()
 
 channel = Channel.current()
 
@@ -24,7 +36,11 @@ channel = Channel.current()
 )
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
-    if msg[0:8] == '#scatter':
+    if msg[0] != '#':
+        pass
+    elif msg in ['#scatter','bar','plot']:
+        await app.sendMessage(group, MessageChain.create(Plain('示例:'+example)))
+    elif msg[0:8] == '#scatter':
             if not os.path.exists('./plot_figure'):
                 os.makedirs('./plot_figure')
             path = sca((msg[9:]))
@@ -76,7 +92,7 @@ def get_draw(lst):
 
 
 def sca(msg):
-    #font = FontProperties(fname='HarmonyOS_Sans_SC_Black.ttf', size=16)
+    font = FontProperties(fname='HarmonyOS_Sans_SC_Medium.ttf', size=16)
     error = ''
     title = ''
     color = 'pink'
@@ -148,8 +164,7 @@ def sca(msg):
     if len(draw) <= 1:
         error += '??;'
     if title != '':
-        #plt.title(title, FontProperties=font)
-        plt.title(title)
+        plt.title(title,fontproperties=font)
     count = 0
 
     for i in draw[1:]:
@@ -180,7 +195,7 @@ def sca(msg):
 
 
 def plot(msg):
-    font = FontProperties(fname='HarmonyOS_Sans_SC_Black.ttf', size=16)
+    font = FontProperties(fname='HarmonyOS_Sans_SC_Medium.ttf', size=16)
     error = ''
     title = ''
     color = 'pink'
@@ -250,7 +265,7 @@ def plot(msg):
     if len(draw) <= 1:
         error += '??;'
     if title != '':
-        plt.title(title, FontProperties=font)
+        plt.title(title, fontproperties=font)
     count = 0
 
     for i in draw[1:]:
@@ -292,7 +307,7 @@ def talk_get(tid):
 
 
 def talk(my_id, my_name=None, mode='scatter'):
-    #font = FontProperties(fname='HarmonyOS_Sans_SC_Black.ttf', size=16)
+    font = FontProperties(fname='HarmonyOS_Sans_SC_Medium.ttf', size=16)
     if not my_name:
         my_name = my_id
     title = f'{my_name}的近期发言次数'
@@ -301,8 +316,7 @@ def talk(my_id, my_name=None, mode='scatter'):
     total = t_data[1]
 
     plt.figure(figsize=(8, 6), dpi=120)
-    plt.title(title)
-    #plt.title(title, FontProperties=font)
+    plt.title(title,fontproperties=font)
     if mode == 'scatter':
         smax = max(total)
         area_s = []

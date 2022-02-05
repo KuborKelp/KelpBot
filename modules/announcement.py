@@ -1,3 +1,4 @@
+from time import sleep
 from graia.saya import Channel
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.message.chain import MessageChain
@@ -5,14 +6,12 @@ from graia.ariadne.app import Ariadne
 from graia.ariadne.message.element import Plain, At, Image
 from graia.ariadne.event.message import *
 import os
-import datetime
-import time
-
+from random import choice
 
 def status():
     path = './data/status/command'
-    Module = 'base'
-    Command = []
+    Module = 'announcement'
+    Command = ['#announcememnt']
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.exists(f'./data/status/modules/'):
@@ -24,26 +23,37 @@ def status():
     with open(f'./data/status/modules/{Module}','w') as txt:
                 txt.write('0')
 
-
 status()
-
-status = [time.time(), 0]
+admin = 2321247175
 channel = Channel.current()
+path = './data/grass/'
+state = False
 
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
     )
 )
+
+
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
-    now = datetime.datetime.now()  # 获取时间
-    now = now.strftime("%Y-%m-%d")  # 获取 年-月-日
-    if not os.path.exists(f'./groupwords/{group.id}'):
-        os.makedirs(f'./groupwords/{group.id}')
-    with open(f'./groupwords/{group.id}/{now}.txt', 'a', encoding='utf-8') as gw:
-        gw.write(msg.replace('[图片]', '') + '\n')
-    if not os.path.exists(f'./individual/{member.id}'):
-        os.makedirs(f'./individual/{member.id}')
-    with open(f'./individual/{member.id}/{now}.txt', 'a', encoding='utf-8') as sp:
-        sp.write('1')
+    global state
+    if member.id == admin:
+        msg_chain = MessageChain.create()
+        if msg[0:9] == '#announce' and not state:
+            state = True
+            msg_chain.append('请发送公告')
+        elif state:
+            msg_chain = MessageChain.create()
+            msg_chain.append('发送完毕')
+            groups = await app.getGroupList()
+            announcement = message
+            state = False
+            announcement.append(('\n————来自Kelpbot插播的一条公告'))
+            for id in groups:
+                await app.sendGroupMessage(id,announcement)
+                sleep(0.5) 
+            
+        if msg_chain:
+            await app.sendGroupMessage(group,msg_chain)

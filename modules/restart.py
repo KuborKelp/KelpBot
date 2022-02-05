@@ -1,3 +1,7 @@
+'''
+Kbot基础:
+ #status
+'''
 from graia.saya import Channel
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.message.chain import MessageChain
@@ -5,14 +9,14 @@ from graia.ariadne.app import Ariadne
 from graia.ariadne.message.element import Plain, At, Image
 from graia.ariadne.event.message import *
 import os
-import datetime
+import PIL
 import time
 
 
 def status():
     path = './data/status/command'
-    Module = 'base'
-    Command = []
+    Module = 'restart'
+    Command = ['#restart']
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.exists(f'./data/status/modules/'):
@@ -26,8 +30,6 @@ def status():
 
 
 status()
-
-status = [time.time(), 0]
 channel = Channel.current()
 
 @channel.use(
@@ -37,13 +39,5 @@ channel = Channel.current()
 )
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
-    now = datetime.datetime.now()  # 获取时间
-    now = now.strftime("%Y-%m-%d")  # 获取 年-月-日
-    if not os.path.exists(f'./groupwords/{group.id}'):
-        os.makedirs(f'./groupwords/{group.id}')
-    with open(f'./groupwords/{group.id}/{now}.txt', 'a', encoding='utf-8') as gw:
-        gw.write(msg.replace('[图片]', '') + '\n')
-    if not os.path.exists(f'./individual/{member.id}'):
-        os.makedirs(f'./individual/{member.id}')
-    with open(f'./individual/{member.id}/{now}.txt', 'a', encoding='utf-8') as sp:
-        sp.write('1')
+    if msg == '#restart' and member.id == 2321247175:
+        pass

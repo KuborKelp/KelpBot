@@ -7,6 +7,23 @@ from graia.ariadne.event.message import *
 import datetime
 import os
 
+def status():
+    path = './data/status/command'
+    Module = 'notice'
+    Command = ['#notice']
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if not os.path.exists(f'./data/status/modules/'):
+        os.makedirs(f'./data/status/modules/')
+    for i in Command:
+        if not os.path.exists(path+'/'+i+'.txt'):
+            with open(path+'/'+i+'.txt','w') as txt:
+                txt.write('0')
+    with open(f'./data/status/modules/{Module}','w') as txt:
+                txt.write('0')
+
+
+status()
 wait_lst = []
 id_lst = []
 
@@ -36,7 +53,7 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
     elif member.id in wait_lst:
         index = wait_lst.index(member.id)
         lst.append(id_lst[index])
-        notice_write(id_lst[index],member.id,message.asPersistentString())
+        notice_write(id_lst[index],member.id,message.asPersistentString()) #消息链持久化
         write_lst(lst)
         await app.sendMessage(group, MessageChain.create([Plain('将在下一次发送消息时提醒')]))
         del wait_lst[index]
@@ -51,7 +68,7 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             info = f'{name}:{time}:'
             with open(path+i,'r') as txt:
                 msg = txt.read()
-            msg = MessageChain.fromPersistentString(msg)
+            msg = MessageChain.fromPersistentString(msg) ##消息链反持久化
             msg = MessageChain.create(Plain(info)).extend(msg)
             os.remove(path+i)
             await app.sendMessage(group,msg)

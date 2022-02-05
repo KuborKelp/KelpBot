@@ -14,6 +14,25 @@ import os
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 
+
+def status():
+    path = './data/status/command'
+    Module = 'jrrp'
+    Command = ['#jrrp']
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if not os.path.exists(f'./data/status/modules/'):
+        os.makedirs(f'./data/status/modules/')
+    for i in Command:
+        if not os.path.exists(path+'/'+i+'.txt'):
+            with open(path+'/'+i+'.txt','w') as txt:
+                txt.write('0')
+    with open(f'./data/status/modules/{Module}','w') as txt:
+                txt.write('0')
+
+status()
+
+
 channel = Channel.current()
 
 @channel.use(
@@ -59,7 +78,10 @@ def get(mid, day):
             rp = list(map(int, line))
     else:
         with open(path, 'w+', encoding='utf-8') as rp_txt:
-            rp = [random.randint(0, 100), 0]
+            if day in ['2022-01-31','2022-01-30','2022-02-01','2022-02-02']:
+                rp = [888,0]
+            else:
+                rp = [random.randint(0, 100), 0]
             rp_txt.write(f'{rp[0]};{rp[1]}')
     return rp
 
@@ -89,14 +111,14 @@ def rp_get(mid, days):
 
 
 def rp_draw(mid, mode, days=15):
-    #font = FontProperties(fname='HarmonyOS_Sans_SC_Medium.ttf', size=16)
+    font = FontProperties(fname='HarmonyOS_Sans_SC_Medium.ttf', size=16)
     title = f'{mid}的近期人品'
     rp_data = rp_get(mid, days)
     day = rp_data[0]
     total = rp_data[1]
 
     plt.figure(figsize=(16, 6), dpi=100)
-    plt.title(title,)
+    plt.title(title,fontproperties=font)
 
     smax = max(total)
     area_s = []
