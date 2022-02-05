@@ -10,8 +10,8 @@ if __name__ == '__main__':
     app = Ariadne(
         MiraiSession(
             host="http://localhost:8080",  # 填入 HTTP API 服务运行的地址
-            verify_key="1145abgg",  # 填入 verifyKey
-            account=2424947232,  # 你的机器人的 qq 号
+            verify_key="11451419198106666sfzfiakk",  # 填入 verifyKey
+            account=12345678901112131415,  # 你的机器人的 qq 号
         )
     )
 
