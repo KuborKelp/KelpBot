@@ -42,13 +42,12 @@ channel = Channel.current()
 )
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
-    if msg[0] == '#':
-        msg = msg[1:].split(' ')
+    msg = msg.split(' ')
     if len(msg) == 1:
         '''
         #jrrp
         '''
-        if msg[0] == 'jrrp':
+        if msg[0] == '#jrrp':
             now = datetime.datetime.now()  # 获取时间
             now = now.strftime("%Y-%m-%d")  # 获取 年-月-日
             rp_lst = get(member.id, now)
@@ -56,7 +55,7 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             reply = f'{qq_name}的今日人品为{rp_lst[0] + rp_lst[1]}({rp_lst[0]})'
             await app.sendMessage(group, MessageChain.create([Plain(reply)]))
     elif len(msg) == 2:
-        if msg[0] == 'jrrp':
+        if msg[0] == '#jrrp':
             if msg[1] in ['scatter', 'bar', 'plot']:
                         draw_mode = msg[1]
                         image_send = rp_draw(mid=member.id, mode=draw_mode)

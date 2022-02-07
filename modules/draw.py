@@ -9,25 +9,28 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import random
 
+
 def status():
     path = './data/status/command'
     Module = 'draw'
-    Command = ['#scatter','#plot','#bar','#talk']
+    Command = ['#scatter', '#plot', '#bar', '#talk']
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.exists(f'./data/status/modules/'):
         os.makedirs(f'./data/status/modules/')
     for i in Command:
-        if not os.path.exists(path+'/'+i+'.txt'):
-            with open(path+'/'+i+'.txt','w') as txt:
+        if not os.path.exists(path + '/' + i + '.txt'):
+            with open(path + '/' + i + '.txt', 'w') as txt:
                 txt.write('0')
-    with open(f'./data/status/modules/{Module}','w') as txt:
-                txt.write('0')
+    with open(f'./data/status/modules/{Module}', 'w') as txt:
+        txt.write('0')
+
 
 example = '#scatter [A,B,C],[90,22,26],[26,88,70],color=[red,blue],s=[400,210],alpha=[0.6,0.4],title=sb'
 status()
 
 channel = Channel.current()
+
 
 @channel.use(
     ListenerSchema(
@@ -38,27 +41,27 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
     msg = message.asDisplay()
     if msg[0] != '#':
         pass
-    elif msg in ['#scatter','bar','plot']:
-        await app.sendMessage(group, MessageChain.create(Plain('示例:'+example)))
+    elif msg in ['#scatter', 'bar', 'plot']:
+        await app.sendMessage(group, MessageChain.create(Plain('示例:' + example)))
     elif msg[0:8] == '#scatter':
-            if not os.path.exists('./plot_figure'):
-                os.makedirs('./plot_figure')
-            path = sca((msg[9:]))
-            image_send = path    
-            await app.sendMessage(group, MessageChain.create([Image(path=image_send)]))
+        if not os.path.exists('./plot_figure'):
+            os.makedirs('./plot_figure')
+        path = sca((msg[9:]))
+        image_send = path
+        await app.sendMessage(group, MessageChain.create([Image(path=image_send)]))
     elif msg[0:5] == '#talk':
-            msg = msg.split(' ')
-            draw_mode = 'scatter'
-            if len(msg) == 2:
-                if msg[1] in ['scatter', 'bar', 'plot']:
-                    draw_mode = msg[1]
-                else:
-                    await app.sendMessage(group, MessageChain.create(Plain('不存在的绘图方式')))
-            if os.path.exists(f'./individual/{member.id}'):
-                path = talk(member.id, member.name, draw_mode)
-                await app.sendMessage(group, MessageChain.create([Image(path=path)]))
+        msg = msg.split(' ')
+        draw_mode = 'scatter'
+        if len(msg) == 2:
+            if msg[1] in ['scatter', 'bar', 'plot']:
+                draw_mode = msg[1]
             else:
-                await app.sendMessage(group, MessageChain.create(Plain('无记录')))
+                await app.sendMessage(group, MessageChain.create(Plain('不存在的绘图方式')))
+        if os.path.exists(f'./individual/{member.id}'):
+            path = talk(member.id, member.name, draw_mode)
+            await app.sendMessage(group, MessageChain.create([Image(path=path)]))
+        else:
+            await app.sendMessage(group, MessageChain.create(Plain('无记录')))
 
 
 def check(line):  # 中括号匹配检查
@@ -164,7 +167,7 @@ def sca(msg):
     if len(draw) <= 1:
         error += '??;'
     if title != '':
-        plt.title(title,fontproperties=font)
+        plt.title(title, fontproperties=font)
     count = 0
 
     for i in draw[1:]:
@@ -316,7 +319,7 @@ def talk(my_id, my_name=None, mode='scatter'):
     total = t_data[1]
 
     plt.figure(figsize=(8, 6), dpi=120)
-    plt.title(title,fontproperties=font)
+    plt.title(title, fontproperties=font)
     if mode == 'scatter':
         smax = max(total)
         area_s = []
