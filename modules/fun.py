@@ -11,7 +11,7 @@ import datetime
 def status():
     path = './data/status/command'
     Module = 'fun'
-    Command = ['#mdd','#mnn','#m11','#choose','#yys','#create']
+    Command = ['#choose','#yys','#create']
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.exists(f'./data/status/modules/'):
@@ -41,31 +41,7 @@ channel = Channel.current()
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
     msg_chain = MessageChain.create()
-    if msg[0:4] == '#mnn':
-        if mdd(member.id):
-            msg_chain.append(f'{member.name}消耗1点人品摸牛头')
-            msg_chain.append(At(1325605742))
-            msg_chain.append(Image(path='./resources/hzd.jpg'))
-        else:
-            msg_chain.append('人品不足')
-    elif msg[0:4] == '#mdd' and group.id == 977263195:
-        if not mdd(member.id):
-            msg_chain.append('人品不足')
-        else:
-            if random.randint(0,1):
-                msg_chain.append(f'{member.name}消耗1点人品摸道道')
-                #msg_chain.append(At(2829770747))
-                msg_chain.append(Image(path='./resources/jqd.JPG'))
-            else:
-                msg_chain.append(f'{member.name}消耗1点人品摸弟弟')
-                msg_chain.append(Image(path='./resources/jhy.JPG'))
-    elif msg[0:4] == '#m11' and member.id in [3056638771,3327995421]:
-        if mdd(member.id):
-            msg_chain.append(f'{member.name}消耗1点人品摸11')
-            msg_chain.append(At(779561085))
-        else:
-            msg_chain.append('人品不足')
-    elif msg[0:7] == '#choose':
+    if msg[0:7] == '#choose':
         msg_chain.append('选择:')
         msg = msg.split(' ')[1:]
         msg_chain.append(random.choice(msg))
@@ -100,17 +76,6 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             
     if msg_chain:
         await app.sendGroupMessage(group, msg_chain)
-
-
-def mdd(member_id):
-    now = datetime.datetime.now().strftime("%Y-%m-%d")  # 获取时间;获取 年-月-日
-    rp_lst = get(member_id, now)  # 输入qq号，返回rp值  # 输入qq号，返回rp值
-    rp_member_final = rp_lst[0] + rp_lst[1] - 1
-    if rp_member_final < 0:
-        return False
-    change(member_id, now, -1)
-    return True
-
 
 def get(mid, day):
     path = f'./rp/{mid}/{day}.txt'
