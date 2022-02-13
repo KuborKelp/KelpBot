@@ -4,6 +4,7 @@ from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.app import Ariadne
 from graia.ariadne.message.element import Plain, At, Image
 from graia.ariadne.event.message import *
+from graia.ariadne.event.mirai import *
 from PIL import Image as Img
 from time import sleep
 import os
@@ -59,37 +60,33 @@ class Chess(object):
         x, y = y, x
         it = self.map[x][y]
         # 行
-        num1 = 0
-        num2 = 0
+        line = ''
         for j in range(0, 4):
-            if self.map[x][j] == 1:
-                num1 += 1
-            elif self.map[x][j] == 2:
-                num2 += 1
-        if num1 == 2 and num2 == 1 and it == 1 and (self.map[x][0] == 0 or self.map[x][3] == 0):  # 斩杀2
+            line += str(self.map[x][j])
+        if ('112' in line or '211' in line) and '0' in line and it == 1:
             for j in range(0, 4):
                 if self.map[x][j] == 2:
                     self.map[x][j] = 0
-        elif num1 == 1 and num2 == 2 and it == 2 and (self.map[x][0] == 0 or self.map[x][3] == 0):  # 斩杀1
+                    break
+        elif ('221' in line or '122' in line) and '0' in line and it == 2:
             for j in range(0, 4):
                 if self.map[x][j] == 1:
                     self.map[x][j] = 0
+                    break
         # 列
-        num1 = 0
-        num2 = 0
+        line = ''
         for i in range(0, 4):
-            if self.map[i][y] == 1:
-                num1 += 1
-            elif self.map[i][y] == 2:
-                num2 += 1
-        if num1 == 2 and num2 == 1 and it == 1 and (self.map[0][y] == 0 or self.map[3][y] == 0):  # 斩杀2
+            line += str(self.map[i][y])
+        if ('112' in line or '211' in line) and '0' in line and it == 1:
             for i in range(0, 4):
                 if self.map[i][y] == 2:
                     self.map[i][y] = 0
-        elif num1 == 1 and num2 == 2 and it == 2 and (self.map[0][y] == 0 or self.map[3][y] == 0):  # 斩杀1
+                    break
+        elif ('221' in line or '122' in line) and '0' in line and it == 2:
             for i in range(0, 4):
                 if self.map[i][y] == 1:
                     self.map[i][y] = 0
+                    break
 
     def if_win(self):
         cmap = str(self.map)
@@ -144,7 +141,7 @@ move = ['u', 'd', 'l', 'r']
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
     msg = message.asDisplay()
     msg_chain = MessageChain.create()
-    if msg[0:12] == '#chess start':
+    if msg == '#chess start':
         if group.id in game:
             prepare()
             msg_chain.append('Chess游戏进行中!')
@@ -153,8 +150,7 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             name.update({group.id: [member.name]})
             game.update({group.id: Chess(group.id)})
             msg_chain.append('请第二位玩家输入#chess join加入游戏!')
-            # msg_chain.append(Image(path=game[group.id].draw()))
-    elif msg[0:11] == '#chess join':
+    elif msg == '#chess join':
         if group.id not in pair:
             msg_chain.append('chess不在配对环节中')
         else:
@@ -173,6 +169,7 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
                 del p, pair[group.id]
     elif msg == '#chess stop':
         if group.id in game:
+            p = game[group.id].get_pair().append(2321247175)
             msg_chain.append('Chess游戏已经销毁!')
             del game[group.id]
         else:
@@ -184,7 +181,6 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             return
         if int(msg[0]) in pos and int(msg[1]) in pos and msg[2] in move and member.id == p[now]:
             x, y = int(msg[0]) - 1, int(msg[1]) - 1
-            print(x, y, now)
             delta = pos_m[move.index(msg[2])]
             xx = x + delta[0]
             yy = y + delta[1]
@@ -193,11 +189,9 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
             block_2 = cmap[yy][xx]
             if block_1 != now + 1 or block_2 != 0 or not (0 <= xx <= 3 and 0 <= yy <= 3):
                 msg_chain.append('非法操作,请检查')
-                print(block_1, block_2, x, y, xx, yy, delta)
             else:
                 n = game[group.id].get_name()
                 game[group.id].move(x, y, xx, yy)
-
                 game[group.id].examine(xx, yy)
                 state = game[group.id].if_win()
                 if state[0]:
