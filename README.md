@@ -1,6 +1,7 @@
 # KelpBot
 ### 一个基于  Graia Ariadne 的QQ机器人  
-
+### 当前状态:
+    部分插件进行优化，优化完成后的插件放置于modules_new文件夹内
 #### 相关项目:  
 - [mirai](https://github.com/mamoe/mirai) & [mirai-console](https://github.com/mamoe/mirai-console)  
 - [mirai-api-http](https://github.com/project-mirai/mirai-api-http)    
