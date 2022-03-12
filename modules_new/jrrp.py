@@ -18,7 +18,7 @@ from time import sleep
 def status():
     path = './data/status/command'
     Module = 'jrrp'
-    Command = ['#jrrp']
+    Command = ['#jrrp','#jrrp plot','#jrrp bar','#jrrp scatter','#jrrp barh','#jrrp test','#jrrp try']
     if not os.path.exists(path):
         os.makedirs(path)
     if not os.path.exists(f'./data/status/modules/'):
@@ -33,9 +33,9 @@ def status():
 
 status()
 rp_x = np.array([i for i in range(101)])
-rp_table = 85**1.002**(-(rp_x-66)**2/4)+15
+rp_table = 85**1.002**(-(rp_x-66)**2/4)+15  #计算公式
 rp_total = rp_table.sum()
-draw_mode = ['bar','plot','scatter','barh']
+draw_mode = ['bar','plot','scatter','barh'] #四种支持的绘图方式
 
 
 channel = Channel.current()
@@ -48,8 +48,8 @@ channel = Channel.current()
     ),
 )
 async def main(app: Ariadne, message: MessageChain, member: Member, group: Group):
-    msg = message.asDisplay().split()
-    msg_chain=MessageChain.create()
+    msg = message.asDisplay().split() #消息链预处理
+    msg_chain=MessageChain.create() #创建一个空的消息链
     length = len(msg)
     if length == 1: # #jrrp
         msg_chain=MessageChain.create()
@@ -64,13 +64,13 @@ async def main(app: Ariadne, message: MessageChain, member: Member, group: Group
         elif msg[1] in draw_mode:
             msg_chain.append(Image(path=rp_draw(member.id,msg[1]))) 
     if msg_chain:
-        sleep(0.2)
+        sleep(0.2) #防止频繁操作导致风控
         await app.sendGroupMessage(group, msg_chain)
 
 
-def rp_get(mid,now):
+def rp_get(mid,now): # 随机获取一个人品
     path=f'./data/rp/{mid}/'
-    if not os.path.exists(path):
+    if not os.path.exists(path): #检查数据所存放的文件夹
         os.makedirs(path)
     if not os.path.exists(path+now):
         global rp_table,rp_total
@@ -84,16 +84,16 @@ def rp_get(mid,now):
             rp = [i,0]
             f.write(f'{i};0')
     else:
-        with open(path+now,'r',encoding='utf-8') as f:
+        with open(path+now,'r',encoding='utf-8') as f: #读取已生成过的人品
             rp=f.read().split(';')
             rp=list(map(int,rp))
     return rp
 
 
-def rp_test():
+def rp_test(): # 生成jrrp理论分布折线图
     global rp_x,rp_table
     path = './cache'
-    if not os.path.exists(path):
+    if not os.path.exists(path): #文件路径检查
         os.makedirs(path)
     path += '/jrrp_test.png'
     plt.figure(figsize=(7,3),dpi=150)
@@ -102,7 +102,7 @@ def rp_test():
     plt.savefig(path)
     return path
 
-def rp_try():
+def rp_try(): # 随机生成10000个rp样本，并绘制图表
     path = './cache'
     if not os.path.exists(path):
         os.makedirs(path)
@@ -127,7 +127,7 @@ def rp_try():
     return path
 
 
-def rp_change(mid, time, delta):
+def rp_change(mid, time, delta): # rp增减函数
     path=f'./data/rp/{mid}/'
     rp = rp_get(mid, time)
     rp[1] += delta
