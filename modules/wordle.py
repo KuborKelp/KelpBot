@@ -85,17 +85,25 @@ class Wordle(object):
         return self.word
 
     def next(self, target):
+        correct_positions = set()
         for i in range(5):
             letter = target[i]
             y = self.round - 1
             x = i
             if letter == self.word[i]:
                 self.green(x, y)
-            elif letter in self.word:
-                self.yellow(x, y)
-            else:
-                self.grey(x, y)
-            self.write(target[i], x, y)
+                correct_positions.add(i)
+                self.write(target[i], x, y)
+        for i in range(5):
+            if i not in correct_positions:
+                letter = target[i]
+                y = self.round - 1
+                x = i
+                if letter in self.word:
+                    self.yellow(x, y)
+                else:
+                    self.grey(x, y)
+                self.write(target[i], x, y)
         self.round += 1
         self.img.save(self.path)
         return self.path
