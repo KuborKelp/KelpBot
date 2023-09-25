@@ -86,6 +86,7 @@ class Wordle(object):
 
     def next(self, target):
         correct_positions = set()
+        correct_letters = set(self.word)
         for i in range(5):
             letter = target[i]
             y = self.round - 1
@@ -93,14 +94,16 @@ class Wordle(object):
             if letter == self.word[i]:
                 self.green(x, y)
                 correct_positions.add(i)
+                correct_letters.remove(letter)
                 self.write(target[i], x, y)
         for i in range(5):
             if i not in correct_positions:
                 letter = target[i]
                 y = self.round - 1
                 x = i
-                if letter in self.word:
+                if letter in correct_letters:
                     self.yellow(x, y)
+                    correct_letters.remove(letter)
                 else:
                     self.grey(x, y)
                 self.write(target[i], x, y)
